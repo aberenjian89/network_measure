@@ -96,12 +96,19 @@ class PingComponent extends React.Component {
       server.ready = true;
       let sum = results.reduce((acc, curr) => acc + curr);
       server.average = (sum / results.length).toFixed(2);
-      new_servers.push(server);
+      this.setState(state => {
+        const servers = state.servers.map((item, idx) => {
+          if (idx == i) {
+            return server;
+          } else {
+            return item;
+          }
+        });
+        return {
+          servers
+        };
+      });
     }
-    this.setState({
-      servers: new_servers
-    });
-    console.log("Done");
   }
 
   calculateAverage(results) {}
