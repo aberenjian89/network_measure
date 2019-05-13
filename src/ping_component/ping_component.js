@@ -81,10 +81,17 @@ class PingComponent extends React.Component {
     };
     this.preping = this.preping.bind(this);
     this.PingHost = this.PingHost.bind(this);
+    this.getlog = this.getlog.bind(this);
   }
 
   componentDidMount() {
     this.preping();
+  }
+
+  getlog(results) {
+    let logs = [];
+    for (let result in results) {
+    }
   }
 
   async preping() {
@@ -94,6 +101,7 @@ class PingComponent extends React.Component {
       let results = await this.PingHost(this.state.servers[i]);
       server.response_times = [...results];
       server.ready = true;
+
       if (results.length > 0) {
         let sum = results.reduce((acc, curr) => acc + curr);
         server.average = (sum / results.length).toFixed(2);
@@ -156,7 +164,7 @@ class PingComponent extends React.Component {
                     <CircularProgress size={25} />
                   </div>
                 ) : (
-                  <Typography>{server.average}</Typography>
+                  <Typography>{server.average} ms</Typography>
                 )}
               </ExpansionPanelSummary>
             </ExpansionPanel>
