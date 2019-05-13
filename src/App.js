@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import PingComponent from "./ping_component/ping_component";
 import "./App.css";
 
