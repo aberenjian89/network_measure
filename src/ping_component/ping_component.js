@@ -136,7 +136,6 @@ class PingComponent extends React.Component {
   }
 
   PingHost(server) {
-    console.log(server.name);
     let results = [];
     let IntervalID = setInterval(() => {
       let p = new Ping();
