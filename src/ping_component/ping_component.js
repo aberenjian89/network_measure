@@ -40,7 +40,7 @@ class PingComponent extends React.Component {
         {
           name: "Skype",
           ready: false,
-          detail: null,
+          detail: [],
           response_times: [],
           average: null,
           url: "https://www.skype.com/en/"
@@ -48,19 +48,19 @@ class PingComponent extends React.Component {
         {
           name: "GoToMeeting",
           ready: false,
-          detail: null,
+          detail: [],
           response_times: [],
           average: null,
           url: "https://www.gotomeeting.com/"
         },
-        // {
-        //   name: "Service Now",
-        //   ready: false,
-        //   detail: null,
-        //   response_times: [],
-        //   average: null,
-        //   url: "https://www.servicenow.com/"
-        // },
+        {
+          name: "Google",
+          ready: false,
+          detail: [],
+          response_times: [],
+          average: null,
+          url: "https://google.com/"
+        },
         // {
         //   name: "Sales Force",
         //   ready: false,
@@ -72,7 +72,7 @@ class PingComponent extends React.Component {
         {
           name: "Slack",
           ready: false,
-          detail: null,
+          detail: [],
           response_times: [],
           average: null,
           url: "https://slack.com/"
@@ -94,8 +94,13 @@ class PingComponent extends React.Component {
       let results = await this.PingHost(this.state.servers[i]);
       server.response_times = [...results];
       server.ready = true;
-      let sum = results.reduce((acc, curr) => acc + curr);
-      server.average = (sum / results.length).toFixed(2);
+      if (results.length > 0) {
+        let sum = results.reduce((acc, curr) => acc + curr);
+        server.average = (sum / results.length).toFixed(2);
+      } else {
+        server.average = "Not Reachable";
+      }
+
       this.setState(state => {
         const servers = state.servers.map((item, idx) => {
           if (idx == i) {
@@ -111,8 +116,6 @@ class PingComponent extends React.Component {
     }
   }
 
-  calculateAverage(results) {}
-
   PingHost(server) {
     console.log(server.name);
     let results = [];
@@ -120,6 +123,7 @@ class PingComponent extends React.Component {
       let p = new Ping();
       p.ping(server.url, (err, data) => {
         if (err) {
+          err = true;
         } else {
           results.push(data);
         }
