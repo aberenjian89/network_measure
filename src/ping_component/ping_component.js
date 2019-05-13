@@ -47,7 +47,8 @@ class PingComponent extends React.Component {
           detail: [],
           response_times: [],
           average: null,
-          url: "https://www.skype.com/en/"
+          uri: "skype.com/en",
+          url: "https://www.skype.com/en"
         },
         {
           name: "GoToMeeting",
@@ -55,6 +56,7 @@ class PingComponent extends React.Component {
           detail: [],
           response_times: [],
           average: null,
+          uri: "gotomeeting.com",
           url: "https://www.gotomeeting.com/"
         },
         {
@@ -63,6 +65,7 @@ class PingComponent extends React.Component {
           detail: [],
           response_times: [],
           average: null,
+          uri: "yahoo.com",
           url: "https://www.yahoo.com"
         },
         {
@@ -71,6 +74,7 @@ class PingComponent extends React.Component {
           detail: [],
           response_times: [],
           average: null,
+          uri: "dev66365.service-now.com",
           url: "https://dev66365.service-now.com"
         },
         {
@@ -79,6 +83,7 @@ class PingComponent extends React.Component {
           detail: [],
           response_times: [],
           average: null,
+          uri: "slack.com",
           url: "https://slack.com/"
         }
       ]
@@ -106,15 +111,13 @@ class PingComponent extends React.Component {
       server.response_times = [...results];
       server.ready = true;
       for (let j = 0; j < results.length; j++) {
-        server.detail.push(
-          `Round trip time to ${server.name}.com: ${results[j]}ms`
-        );
+        server.detail.push(`Round trip time to ${server.uri}: ${results[j]}ms`);
       }
       if (results.length > 0) {
         let sum = results.reduce((acc, curr) => acc + curr);
         server.average = (sum / results.length).toFixed(2);
       } else {
-        server.average = "Not Reachable";
+        server.average = null;
       }
 
       this.setState(state => {
@@ -171,8 +174,10 @@ class PingComponent extends React.Component {
                   <div>
                     <CircularProgress size={25} />
                   </div>
-                ) : (
+                ) : server.average ? (
                   <Typography>avg: {server.average} ms</Typography>
+                ) : (
+                  <Typography>Not Reachable</Typography>
                 )}
               </ExpansionPanelSummary>
               {server.detail.length > 0 && (
