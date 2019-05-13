@@ -7,7 +7,6 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 import Ping from "ping.js";
 
 const styles = theme => ({
@@ -23,6 +22,11 @@ const styles = theme => ({
   },
   wrapper: {
     width: "30%"
+  },
+  summary_container:{
+    "& div:first-child":{
+      justifyContent: "space-between !important"
+    }
   }
 });
 
@@ -32,73 +36,102 @@ class PingComponent extends React.Component {
     this.state = {
       IntervalID: null,
       count: 0,
-      skype: {
+      servers: [
+       {
+        name: "Skype",
         ready: false,
         detail: null,
         response_times: [],
-        average: null
+        average: null,
+        url: "https://www.skype.com/en/"
       },
-      go_to_meeting: {
+      {
+        name: "GoToMeeting",
         ready: false,
         detail: null,
         response_times: [],
-        average: null
+        average: null,
+        url: "https://www.gotomeeting.com/"
       },
-      service_now: {
+      // {
+      //   name: "Service Now",
+      //   ready: false,
+      //   detail: null,
+      //   response_times: [],
+      //   average: null,
+      //   url: "https://www.servicenow.com/"
+      // },
+      // {
+      //   name: "Sales Force",
+      //   ready: false,
+      //   detail: null,
+      //   response_times: [],
+      //   average: null,
+      //   url: "https://www.salesforce.com/"
+      // },
+      {
+        name: "Slack",
         ready: false,
         detail: null,
         response_times: [],
-        average: null
-      },
-      sales_force: {
-        ready: false,
-        detail: null,
-        response_times: [],
-        average: null
-      },
-      slack: {
-        ready: false,
-        detail: null,
-        response_times: [],
-        average: null
+        average: null,
+        url: "https://slack.com/"
       }
-    };
+    ]
+    }
+    this.preping = this.preping.bind(this)
+    this.PingHost = this.PingHost.bind(this)
   }
 
-  PreparePing() {}
+  componentDidMount(){
+    this.preping()
+  }
 
-  PingHost(host) {}
+  async preping(){
+    let new_servers = []
+    // for(let i = 0 ; i < this.state.servers.length;i++){
+    //   console.log("Pinged ", this.state.servers[i].name)
+    //   let server = await this.PingHost(this.state.servers[i],i)
+    // }
+    for (const server of this.state.servers){
+      let s = await this.PingHost(server)
+    }
+    console.log("Done")
+  }
+
+  async PingHost(server,) {
+      let p = new Ping()
+      p.ping(server.url,(err,data)=>{
+        if (err){
+          
+        }else{
+          console.log(data)
+          server.response_times.push(data)
+        }
+      })
+  }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.wrapper}>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography className={classes.heading}>Skype</Typography>
+         {this.state.servers.map((server,key)=>(
+            <ExpansionPanel key={key}>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.summary_container}>
+              <Typography className={classes.heading}>{server.name}</Typography>
+              {!server.ready ? (
+                <div>
+                  <CircularProgress size={25}/>
+                </div>
+              ):(
+                <Typography>
+                  {server.average}
+                </Typography>
+              )}
             </ExpansionPanelSummary>
           </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography className={classes.heading}>GoToMeeting</Typography>
-            </ExpansionPanelSummary>
-          </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography className={classes.heading}>ServiceNow</Typography>
-            </ExpansionPanelSummary>
-          </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography className={classes.heading}>SalesForce</Typography>
-            </ExpansionPanelSummary>
-          </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography className={classes.heading}>Slack</Typography>
-            </ExpansionPanelSummary>
-          </ExpansionPanel>
+         ))}
         </div>
       </div>
     );
