@@ -3,7 +3,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-// import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -27,6 +27,10 @@ const styles = theme => ({
     "& div:first-child": {
       justifyContent: "space-between !important"
     }
+  },
+  detail_panel: {
+    display: "flex",
+    flexDirection: "column"
   }
 });
 
@@ -54,21 +58,21 @@ class PingComponent extends React.Component {
           url: "https://www.gotomeeting.com/"
         },
         {
-          name: "Google",
+          name: "Yahoo",
           ready: false,
           detail: [],
           response_times: [],
           average: null,
-          url: "https://google.com/"
+          url: "https://www.yahoo.com"
         },
-        // {
-        //   name: "Sales Force",
-        //   ready: false,
-        //   detail: null,
-        //   response_times: [],
-        //   average: null,
-        //   url: "https://www.salesforce.com/"
-        // },
+        {
+          name: "Service Now",
+          ready: false,
+          detail: [],
+          response_times: [],
+          average: null,
+          url: "https://dev66365.service-now.com"
+        },
         {
           name: "Slack",
           ready: false,
@@ -101,7 +105,11 @@ class PingComponent extends React.Component {
       let results = await this.PingHost(this.state.servers[i]);
       server.response_times = [...results];
       server.ready = true;
-
+      for (let j = 0; j < results.length; j++) {
+        server.detail.push(
+          `Round trip time to ${server.name}.com: ${results[j]}ms`
+        );
+      }
       if (results.length > 0) {
         let sum = results.reduce((acc, curr) => acc + curr);
         server.average = (sum / results.length).toFixed(2);
@@ -164,9 +172,16 @@ class PingComponent extends React.Component {
                     <CircularProgress size={25} />
                   </div>
                 ) : (
-                  <Typography>{server.average} ms</Typography>
+                  <Typography>avg: {server.average} ms</Typography>
                 )}
               </ExpansionPanelSummary>
+              {server.detail.length > 0 && (
+                <ExpansionPanelDetails className={classes.detail_panel}>
+                  {server.detail.map((response, key) => (
+                    <Typography key={key}>{response}</Typography>
+                  ))}
+                </ExpansionPanelDetails>
+              )}
             </ExpansionPanel>
           ))}
         </div>
